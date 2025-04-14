@@ -58,6 +58,29 @@
         android:textColor="#FFFFFF"
         android:onClick="login"
         android:text="@string/login" />
+    <Button
+        android:id="@+id/loginGoogleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_gravity="center_horizontal"
+        android:width="200dp"
+        android:backgroundTint="#730A7D"
+        android:textColor="#FFFFFF"
+        android:onClick="loginWithGoogle"
+        android:text="@string/login_with_google" />
+    <Button
+        android:id="@+id/loginAnonymButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_gravity="center_horizontal"
+        android:width="200dp"
+        android:backgroundTint="#730A7D"
+        android:textColor="#FFFFFF"
+        android:onClick="loginAsAnonym"
+        android:text="@string/login_anonymously"
+        />
 
     <Button
         android:id="@+id/registerButton"

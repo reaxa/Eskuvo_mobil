@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Promise</string>
+    <string name="app_name">Eskuvo</string>
     <string name="email">Email</string>
     <string name="password">Jelszó</string>
     <string name="login">Bejelentkezés</string>
@@ -8,6 +8,40 @@
     <string name="registerText">Regisztráció</string>
     <string name="neved">Neved</string>
     <string name="password2">Jelszó mégegyszer</string>
+    <string name="login_with_google">Bejelentkezés Google-lal</string>
+    <string name="login_anonymously">Bejelentkezés névtelenül</string>
+    <string name="title_activity_menu">Menu</string>
+
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="promise_text">
+    A Promise egy olyan varázslatos világ, ahol az esküvők álomszerű hangulata találkozik a kifinomult stílussal és a részletek iránti szenvedéllyel. Célunk, hogy a szerelmetek történetét olyan díszletekbe öltöztessük, melyek örökre emlékezetesek maradnak. Legyen szó egy romantikus kertipartiról, egy elegáns kastélyról vagy egy bohém tengerparti ceremóniáról – mi segítünk életre kelteni az elképzeléseiteket.
+
+    Weboldalunkon keresztül könnyedén böngészhetsz különleges esküvői dekorációink között, inspirálódhatsz korábbi munkáinkból, és személyre szabott ajánlatot is kérhetsz álmaid napjára.
+
+    Folyamatosan bővítjük kínálatunkat, követjük az aktuális trendeket, ugyanakkor nagy hangsúlyt fektetünk a klasszikus eleganciára és az egyedi elképzelések megvalósítására. Minden díszlet mögött gondos tervezés és szeretetteljes kivitelezés áll.
+
+    Oldalunkon elérhető esküvői inspirációs blog és kommentehető galéria is segít a párokat abban, hogy megtalálják saját stílusukat, és ötleteket merítsenek a nagy naphoz. A hozzászólásokban megoszthatod tapasztalataidat, tippjeidet – hiszen hisszük, hogy a közösség ereje varázslatossá teszi a szervezés folyamatát is.
+
+    A Promise nem csupán egy dekorációs szolgáltatás, hanem egy lelkes közösség, amely azért dolgozik, hogy a legfontosabb pillanatok igazán különlegesek legyenek. Legyél menyasszony, vőlegény, ceremóniamester vagy csak álmodozó – nálunk inspirációra, szakértelemre és valódi törődésre találsz.
+</string>
+    <string name="aboutus">Rólunk</string>
+    <string name="decorations">Dekorációk</string>
+    <string name="aboutustext1">Üdvözlünk az álomesküvők birodalmában!</string>
+    <string name="alcim">Teremtsd meg a tökéletes hangulatot életed legszebb napjára!</string>
+    <string name="promisecim">Promise</string>
+    <string name="motto">\nMottónk: *Szerelem a részletekben, harmónia a pillanatokban.*</string>
+    <string name="navigation_drawer_open">Menü megnyitása</string>
+    <string name="navigation_drawer_close">Menü bezárása</string>
+    <string name="promise">Promise</string>
+    <string name="dekoraciotext">Majd itt jelennek meg a dekorációk</string>
+
 </resources>
 
 

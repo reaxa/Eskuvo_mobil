@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/nav_about"
+        android:title="@string/aboutus" />
+    <item android:id="@+id/nav_dekoraciok"
+        android:title="@string/decorations" />
+    <item android:id="@+id/nav_login"
+        android:title="@string/login" />
+    <item android:id="@+id/nav_register"
+        android:title="@string/register" />
+</menu>

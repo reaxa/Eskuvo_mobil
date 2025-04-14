@@ -13,6 +13,17 @@
         android:theme="@style/Theme.Eskuvo"
         tools:targetApi="31">
         <activity
+            android:name=".decorations"
+            android:exported="false" />
+        <activity
+            android:name=".Menu"
+            android:exported="false"
+            android:label="@string/title_activity_menu"
+            android:theme="@style/Theme.Eskuvo.NoActionBar" />
+        <activity
+            android:name=".Aboutus"
+            android:exported="false" />
+        <activity
             android:name=".Register"
             android:exported="false" />
         <activity
