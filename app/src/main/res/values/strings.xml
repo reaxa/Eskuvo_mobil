@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Promise</string>
+    <string name="email">Email</string>
+    <string name="password">Jelszó</string>
+    <string name="login">Bejelentkezés</string>
+    <string name="register">Regisztráció</string>
+    <string name="loginText">Bejelentkezés</string>
+    <string name="registerText">Regisztráció</string>
+    <string name="neved">Neved</string>
+    <string name="password2">Jelszó mégegyszer</string>
+</resources>
+
+
+
+
+
