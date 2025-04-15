@@ -13,6 +13,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -30,6 +31,7 @@ public class Register extends AppCompatActivity implements NavigationView.OnNavi
 
     private SharedPreferences preferences;
     private FirebaseAuth mAuth;
+    private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +39,8 @@ public class Register extends AppCompatActivity implements NavigationView.OnNavi
         setContentView(R.layout.activity_register);
 
         int secret_key = getIntent().getIntExtra("SECRET_KEY", 0);
+        Log.d(LOG_TAG, "Received SECRET_KEY: " + secret_key);
+
         if (secret_key != 88) {
             finish();
         }
@@ -56,13 +60,39 @@ public class Register extends AppCompatActivity implements NavigationView.OnNavi
 
         mAuth = FirebaseAuth.getInstance();
 
-        // Toolbar és navigációs menü beállítása
+        // Toolbar beállítás
         Toolbar toolbar = findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+
+        // Hamburger ikon működtetése
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close
+        );
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        // Menüelemek kezelése
+        navigationView.setNavigationItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.nav_login) {
+                startActivity(new Intent(this, MainActivity.class));
+            } else if (item.getItemId() == R.id.nav_register) {
+                startActivity(new Intent(this, Register.class));
+                Intent intent = new Intent(this, Register.class);
+                intent.putExtra("SECRET_KEY", 88);  // Add the SECRET_KEY here
+                startActivity(intent);
+            } else if (item.getItemId() == R.id.nav_about) {
+                startActivity(new Intent(this, Aboutus.class));
+            } else if (item.getItemId() == R.id.nav_dekoraciok) {
+                startActivity(new Intent(this, decorations.class));
+            }
+            drawerLayout.closeDrawers();
+            return true;
+        });
 
         Log.i(LOG_TAG, "onCreate");
     }
@@ -99,7 +129,7 @@ public class Register extends AppCompatActivity implements NavigationView.OnNavi
 
     public void login(View view) {
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("SECRET_KEY", 66);
+        intent.putExtra("SECRET_KEY", 88);
         startActivity(intent);
     }
 

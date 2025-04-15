@@ -20,7 +20,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 
 
-public class MainActivity extends AppCompatActivity implements navos {
+public class MainActivity extends AppCompatActivity {
 private static final String LOG_TAG = MainActivity.class.getName();
 private static final String PREF_KEY = MainActivity.class.getPackage().toString();
 private static final int SECRET_KEY = 88;
@@ -62,9 +62,12 @@ private static final int SECRET_KEY = 88;
             if (item.getItemId() == R.id.nav_login) {
                 startActivity(new Intent(this, MainActivity.class));
             } else if (item.getItemId() == R.id.nav_register) {
+                Intent intent = new Intent(this, Register.class);
+                intent.putExtra("SECRET_KEY", 88);  // Add the SECRET_KEY here
+                startActivity(intent);
                 startActivity(new Intent(this, Register.class));
             } else if (item.getItemId() == R.id.nav_about) {
-                // Action for about
+                startActivity(new Intent(this, Aboutus.class));
             } else if (item.getItemId() == R.id.nav_dekoraciok) {
                 startActivity(new Intent(this, decorations.class));
             }
@@ -130,28 +133,10 @@ private static final int SECRET_KEY = 88;
     public void register(View view) {
         Intent intent = new Intent(this, Register.class);
         intent.putExtra("SECRET_KEY", 88);
+        Log.d(LOG_TAG, "Navigating to Register screen with SECRET_KEY = 88");
         startActivity(intent);
     }
 
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.nav_about) {
-            startActivity(new Intent(this, Aboutus.class));
-        } else if (id == R.id.nav_dekoraciok) {
-            startActivity(new Intent(this, decorations.class));
-        } else if (id == R.id.nav_login) {
-            startActivity(new Intent(this, MainActivity.class));
-        } else if (id == R.id.nav_register) {
-            startActivity(new Intent(this, Register.class));
-        }
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
 
 
 

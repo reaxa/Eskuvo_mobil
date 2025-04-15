@@ -43,9 +43,12 @@ public class Aboutus extends AppCompatActivity {
             if (item.getItemId() == R.id.nav_login) {
                 startActivity(new Intent(this, MainActivity.class));
             } else if (item.getItemId() == R.id.nav_register) {
+                Intent intent = new Intent(this, Register.class);
+                intent.putExtra("SECRET_KEY", 88);  // Add the SECRET_KEY here
+                startActivity(intent);
                 startActivity(new Intent(this, Register.class));
             } else if (item.getItemId() == R.id.nav_about) {
-                // Action for about
+                startActivity(new Intent(this, Aboutus.class));
             } else if (item.getItemId() == R.id.nav_dekoraciok) {
                 startActivity(new Intent(this, decorations.class));
             }

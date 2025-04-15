@@ -18,9 +18,10 @@
             android:id="@+id/tool_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
+            android:background="#730A7D"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:titleTextColor="@android:color/white" />
+            app:titleTextColor="@android:color/white"
+            app:title="@string/decorations"/>
 
 
 
@@ -68,7 +69,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:menu="@menu/activity_main_drawer"
-        app:headerLayout="@layout/nav_header_menu"
-        android:fitsSystemWindows="true" />
+        app:menu="@menu/drawer_menu"
+        app:headerLayout="@layout/nav_header"
+        android:background="#CA73D7"
+        />
 </androidx.drawerlayout.widget.DrawerLayout>

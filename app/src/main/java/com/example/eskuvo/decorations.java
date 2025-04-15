@@ -20,7 +20,7 @@ public class decorations extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_aboutus);
+        setContentView(R.layout.activity_decorations);
 
         // Toolbar beállítás
         Toolbar toolbar = findViewById(R.id.tool_bar);
@@ -43,6 +43,9 @@ public class decorations extends AppCompatActivity {
             if (item.getItemId() == R.id.nav_login) {
                 startActivity(new Intent(this, MainActivity.class));
             } else if (item.getItemId() == R.id.nav_register) {
+                Intent intent = new Intent(this, Register.class);
+                intent.putExtra("SECRET_KEY", 88);  // Add the SECRET_KEY here
+                startActivity(intent);
                 startActivity(new Intent(this, Register.class));
             } else if (item.getItemId() == R.id.nav_about) {
                 startActivity(new Intent(this, Aboutus.class));

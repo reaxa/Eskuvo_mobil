@@ -14,13 +14,15 @@
         <!-- Toolbar -->
 
         <!-- Regisztrációs mezők -->
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/tool_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#730A7D"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:title="Regisztráció" />
+            app:title="Regisztráció"
+            app:titleTextColor="@android:color/white"/>
 
         <ScrollView
             android:layout_width="match_parent"
@@ -63,23 +65,31 @@
                     android:inputType="textPassword"
                     android:minHeight="48dp" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/registerButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:backgroundTint="@android:color/transparent"
+                    android:background="@drawable/rounded_button"
+                    android:textColor="#FFFFFF"
                     android:text="@string/register"
                     android:onClick="register"
-                    android:background="#730A7D"
-                    />
+                    style="@style/Widget.MaterialComponents.Button" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/loginButton"
+                    style="@style/Widget.MaterialComponents.Button"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/login"
+                    android:layout_height="58dp"
+                    android:layout_marginTop="16dp"
+
+                    android:backgroundTint="#730A7D"
                     android:onClick="login"
-                    android:background="#730A7D"
-                    />
+                    android:text="@string/login"
+                    android:textColor="#FFFFFF"
+                    app:cornerRadius="24dp" />
+
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
@@ -92,7 +102,7 @@
         android:layout_gravity="start"
         app:menu="@menu/drawer_menu"
         app:headerLayout="@layout/nav_header"
-        android:background="#730A7D"
+        android:background="#CA73D7"
         />
 
 </androidx.drawerlayout.widget.DrawerLayout>
