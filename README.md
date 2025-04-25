@@ -1,0 +1,1 @@
+Projektem azért lila, mert alapból a webes projektem is lila, amit majd össze tervezek kapcsolni.(Hamarabb kezdtem el a webeset) Így emiatt unfair lenne szerintem, ha csak emiatt összenéznék a videóval, hogy "ugyanaz".
