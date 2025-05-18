@@ -2,6 +2,8 @@ package com.example.eskuvo;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +15,9 @@ import com.example.eskuvo.MainActivity;
 import com.example.eskuvo.R;
 import com.example.eskuvo.decorations;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 public class Aboutus extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
@@ -22,14 +27,12 @@ public class Aboutus extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_aboutus);
 
-        // Toolbar beállítás
         Toolbar toolbar = findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
 
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
-        // Hamburger ikon működtetése
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar,
                 R.string.navigation_drawer_open,
@@ -38,23 +41,50 @@ public class Aboutus extends AppCompatActivity {
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        // Menüelemek kezelése
+        Menu menu = navigationView.getMenu();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null && !currentUser.isAnonymous()) {
+            menu.findItem(R.id.nav_profile).setVisible(true);
+            menu.findItem(R.id.nav_logout).setVisible(true);
+            menu.findItem(R.id.nav_basket).setVisible(true);   // <-- Kosár menüpont
+            menu.findItem(R.id.nav_login).setVisible(false);
+            menu.findItem(R.id.nav_register).setVisible(false);
+        } else {
+            menu.findItem(R.id.nav_profile).setVisible(false);
+            menu.findItem(R.id.nav_logout).setVisible(false);
+            menu.findItem(R.id.nav_basket).setVisible(false);  // <-- Kosár menüpont eltüntetése anonim vagy nincs login
+            menu.findItem(R.id.nav_login).setVisible(true);
+            menu.findItem(R.id.nav_register).setVisible(true);
+        }
+
+
+        // Menüelemek kattintás
         navigationView.setNavigationItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.nav_login) {
+            int id = item.getItemId();
+            if (id == R.id.nav_login) {
                 startActivity(new Intent(this, MainActivity.class));
-            } else if (item.getItemId() == R.id.nav_register) {
+            } else if (id == R.id.nav_register) {
                 Intent intent = new Intent(this, Register.class);
-                intent.putExtra("SECRET_KEY", 88);  // Add the SECRET_KEY here
+                intent.putExtra("SECRET_KEY", 88);
                 startActivity(intent);
-                startActivity(new Intent(this, Register.class));
-            } else if (item.getItemId() == R.id.nav_about) {
+            } else if (id == R.id.nav_about) {
                 startActivity(new Intent(this, Aboutus.class));
-            } else if (item.getItemId() == R.id.nav_dekoraciok) {
+            } else if (id == R.id.nav_dekoraciok) {
                 startActivity(new Intent(this, decorations.class));
+            } else if (id == R.id.nav_profile) {
+                startActivity(new Intent(this, ProfileActivity.class));
+            } else if (id == R.id.nav_basket) {
+                startActivity(new Intent(this, BasketActivity.class));  // kosár activity indítása
+            } else if (id == R.id.nav_logout) {
+                mAuth.signOut();
+                startActivity(new Intent(this, MainActivity.class));
+                finish();
             }
-            drawerLayout.closeDrawers();
+            drawerLayout.closeDrawer(GravityCompat.START);
             return true;
         });
-
     }
+
 }

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:background="#EEE"
+    android:layout_margin="8dp">
+
+    <TextView
+        android:id="@+id/textViewCartName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/item_name"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/textViewCartQuantity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Mennyiség: 1"
+        android:textSize="14sp"/>
+
+    <TextView
+        android:id="@+id/textViewCartPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ár: 1000 Ft"
+        android:textSize="14sp"
+        android:textStyle="italic"/>
+
+    <ImageButton
+        android:id="@+id/buttonDecrease"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@android:drawable/ic_media_previous"
+        android:contentDescription="@string/decrease_quantity"
+        android:background="?attr/selectableItemBackgroundBorderless"/>
+
+    <ImageButton
+        android:id="@+id/buttonIncrease"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@android:drawable/ic_media_next"
+        android:contentDescription="@string/increase_quantity"
+        android:background="?attr/selectableItemBackgroundBorderless"/>
+
+</LinearLayout>

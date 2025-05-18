@@ -1,0 +1,142 @@
+[
+  {
+    "id": 1,
+    "name": "Virágkoszorú",
+    "description": "Színes virágkoszorú.",
+    "price": 4500,
+    "imageUrl": "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcQou0fI4q8of4FUMTsTHCTYmQL2rmwn0HQ8EmE4qAA8YXRBXXeWmA6PJKVOOb_qxO5VjBDT9nzyTOQSjGLizMdNyezfbcul7E3xs8TTvw84dogBq1ZaYODFeXLlVgHXHBPFqBGUcQ&usqp=CAc"
+  },
+  {
+    "id": 2,
+    "name": "Gyertyatartó",
+    "description": "Elegáns gyertyatartó.",
+    "price": 3200,
+    "imageUrl": "https://gardos.hu/wp-content/uploads/2023/07/6151ver-haromagu-gyertyatarto.jpg"
+  },
+  {
+    "id": 3,
+    "name": "Asztaldísz Rózsákkal",
+    "description": "Letisztult fehér rózsadísz.",
+    "price": 3800,
+    "imageUrl": "https://img.kwcdn.com/product/Fancyalgo/VirtualModelMatting/151411aba4ce17fc8c73d18b00b69a24.jpg?imageMogr2/auto-orient%7CimageView2/2/w/800/q/70/format/webp"
+  },
+  {
+    "id": 4,
+    "name": "Kis Csokor",
+    "description": "Dekoratív kis csokor ajándékba.",
+    "price": 2900,
+    "imageUrl": "https://escadaviragkuldes.hu/storage/optimized-images/shares/termekkepek/feher_rozsacsokor_800-large.webp"
+  },
+  {
+    "id": 5,
+    "name": "Vintage Dísz",
+    "description": "Régi idők hangulatát idézi.",
+    "price": 3100,
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPObF4XKbiGW4jyxEhzi286a-l2vK6XlOK9g&s"
+  },
+  {
+    "id": 6,
+    "name": "Esküvői Középdísz",
+    "description": "Tökéletes esküvői dekoráció.",
+    "price": 5500,
+    "imageUrl": "https://img.kwcdn.com/product/open/2024-09-06/1725629075631-d2d66f024b33425db3be8a7f8d864b7b-goods.jpeg?imageView2/2/w/500/q/60/format/webp"
+  },
+  {
+    "id": 7,
+    "name": "Tavaszi Kompozíció",
+    "description": "Üde, színes tavaszi csoda.",
+    "price": 3300,
+    "imageUrl": "https://a.allegroimg.com/original/118ac0/fd9aeddd481f8262a988ceaa6fc4/Tavaszi-dekoracio-kompozicio-asztaldisz"
+  },
+  {
+    "id": 8,
+    "name": "Karácsonyi Dísz",
+    "description": "Fenyőillat és ünnepi hangulat.",
+    "price": 3600,
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRrZoQDQWZbugIKhBO4VEDNMqL0Fj75Wub1Q&s"
+  },
+  {
+    "id": 9,
+    "name": "Őszi Kosár",
+    "description": "Tökéletes dísz októberre.",
+    "price": 3700,
+    "imageUrl": "https://www.firstdecor.hu/img/80191/Y672GREY/238x238,r/Y672GREY.jpg?time=1713868791"
+  },
+  {
+    "id": 10,
+    "name": "Romantikus Asztaldísz",
+    "description": "Romantikus vacsorákhoz.",
+    "price": 4100,
+    "imageUrl": "https://lorato.hu/img/43221/L121565/500x500/L121565.webp?time=1705588642"
+  },
+  {
+    "id": 11,
+    "name": "Modern Dísz",
+    "description": "Minimalista stílusban.",
+    "price": 3000,
+    "imageUrl": "https://escadaviragkuldes.hu/storage/optimized-images/shares/termekkepek/feher_rozsacsokor_800-large.webp"
+  },
+  {
+    "id": 12,
+    "name": "Esküvői Csokor",
+    "description": "Elegáns menyasszonyi csokor.",
+    "price": 5900,
+    "imageUrl": "https://escadaviragkuldes.hu/storage/optimized-images/shares/termekkepek/feher_rozsacsokor_800-large.webp"
+  },
+  {
+    "id": 13,
+    "name": "Díszpárna Mellévaló",
+    "description": "Hangulatos kiegészítő.",
+    "price": 2200,
+    "imageUrl": "https://escadaviragkuldes.hu/storage/optimized-images/shares/termekkepek/feher_rozsacsokor_800-large.webp"
+  },
+  {
+    "id": 14,
+    "name": "Fehér Kompozíció",
+    "description": "Fehér virágok harmóniája.",
+    "price": 4700,
+    "imageUrl": "https://escadaviragkuldes.hu/storage/optimized-images/shares/termekkepek/feher_rozsacsokor_800-large.webp"
+  },
+  {
+    "id": 15,
+    "name": "Mini Váza",
+    "description": "Asztal közepére álmodva.",
+    "price": 1900,
+    "imageUrl": "https://escadaviragkuldes.hu/storage/optimized-images/shares/termekkepek/feher_rozsacsokor_800-large.webp"
+  },
+  {
+    "id": 16,
+    "name": "Ajtódísz",
+    "description": "Üdvözöld vendégeid stílusosan.",
+    "price": 2800,
+    "imageUrl": "https://escadaviragkuldes.hu/storage/optimized-images/shares/termekkepek/feher_rozsacsokor_800-large.webp"
+  },
+  {
+    "id": 17,
+    "name": "Bohém Kompozíció",
+    "description": "Szabad stílusú virágdísz.",
+    "price": 3500,
+    "imageUrl": "https://escadaviragkuldes.hu/storage/optimized-images/shares/termekkepek/feher_rozsacsokor_800-large.webp"
+  },
+  {
+    "id": 18,
+    "name": "Pasztell Dísz",
+    "description": "Visszafogott, elegáns színek.",
+    "price": 1900,
+    "imageUrl": "https://escadaviragkuldes.hu/storage/optimized-images/shares/termekkepek/feher_rozsacsokor_800-large.webp"
+  },
+  {
+    "id": 19,
+    "name": "Lila Csoda",
+    "description": "A lila minden árnyalatában.",
+    "price": 4500,
+    "imageUrl": "https://escadaviragkuldes.hu/storage/optimized-images/shares/termekkepek/feher_rozsacsokor_800-large.webp"
+  },
+  {
+    "id": 20,
+    "name": "Téli Elegancia",
+    "description": "Fehér és ezüst kombinációja.",
+    "price": 1000,
+    "imageUrl": "https://escadaviragkuldes.hu/storage/optimized-images/shares/termekkepek/feher_rozsacsokor_800-large.webp"
+  }
+]

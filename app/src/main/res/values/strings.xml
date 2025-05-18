@@ -41,6 +41,16 @@
     <string name="navigation_drawer_close">Menü bezárása</string>
     <string name="promise">Promise</string>
     <string name="dekoraciotext">Majd itt jelennek meg a dekorációk</string>
+    <string name="default_web_client_id">289073476928-hrhpd6g97oq2ejif6m611qv5h9oul7cj.apps.googleusercontent.com</string>
+    <string name="kijelentkezes">Kijelentkezés</string>
+    <string name="profile">Profil</string>
+    <string name="add_to_cart">Kosárba tesz</string>
+    <string name="basket">Kosár</string>
+    <string name="item_name">Dekoráció neve</string>
+    <string name="decrease_quantity">csokkentes\n</string>
+    <string name="increase_quantity">noveles</string>
+    <string name="osszeg">Összeg:</string>
+    <string name="datum">Dátum:</string>
 
 </resources>
 

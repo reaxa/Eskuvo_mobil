@@ -5,25 +5,41 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+
+import androidx.annotation.Nullable;
 import androidx.drawerlayout.widget.DrawerLayout;
+
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
 
 public class MainActivity extends AppCompatActivity {
 private static final String LOG_TAG = MainActivity.class.getName();
 private static final String PREF_KEY = MainActivity.class.getPackage().toString();
 private static final int SECRET_KEY = 88;
+private static final int RC_SIGN_IN = 23;
 
     EditText userEmailET;
     EditText userPasswordET;
@@ -33,6 +49,8 @@ private static final int SECRET_KEY = 88;
     private SharedPreferences preferences;
 
     private FirebaseAuth mAuth;
+    private GoogleSignInClient mGoogleSignInClient;
+
     private DrawerLayout drawerLayout;
 
 
@@ -57,21 +75,48 @@ private static final int SECRET_KEY = 88;
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        // Menüelemek kezelése
+        Menu menu = navigationView.getMenu();
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null && !currentUser.isAnonymous()) {
+            menu.findItem(R.id.nav_profile).setVisible(true);
+            menu.findItem(R.id.nav_logout).setVisible(true);
+            menu.findItem(R.id.nav_basket).setVisible(true);   // <-- Kosár menüpont
+            menu.findItem(R.id.nav_login).setVisible(false);
+            menu.findItem(R.id.nav_register).setVisible(false);
+        } else {
+            menu.findItem(R.id.nav_profile).setVisible(false);
+            menu.findItem(R.id.nav_logout).setVisible(false);
+            menu.findItem(R.id.nav_basket).setVisible(false);  // <-- Kosár menüpont eltüntetése anonim vagy nincs login
+            menu.findItem(R.id.nav_login).setVisible(true);
+            menu.findItem(R.id.nav_register).setVisible(true);
+        }
+
+
+        // Menüelemek kattintás
         navigationView.setNavigationItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.nav_login) {
+            int id = item.getItemId();
+            if (id == R.id.nav_login) {
                 startActivity(new Intent(this, MainActivity.class));
-            } else if (item.getItemId() == R.id.nav_register) {
+            } else if (id == R.id.nav_register) {
                 Intent intent = new Intent(this, Register.class);
-                intent.putExtra("SECRET_KEY", 88);  // Add the SECRET_KEY here
+                intent.putExtra("SECRET_KEY", 88);
                 startActivity(intent);
-                startActivity(new Intent(this, Register.class));
-            } else if (item.getItemId() == R.id.nav_about) {
+            } else if (id == R.id.nav_about) {
                 startActivity(new Intent(this, Aboutus.class));
-            } else if (item.getItemId() == R.id.nav_dekoraciok) {
+            } else if (id == R.id.nav_dekoraciok) {
                 startActivity(new Intent(this, decorations.class));
+            } else if (id == R.id.nav_profile) {
+                startActivity(new Intent(this, ProfileActivity.class));
+            } else if (id == R.id.nav_basket) {
+                startActivity(new Intent(this, BasketActivity.class));  // kosár activity indítása
+            } else if (id == R.id.nav_logout) {
+                mAuth.signOut();
+                startActivity(new Intent(this, MainActivity.class));
+                finish();
             }
-            drawerLayout.closeDrawers();
+            drawerLayout.closeDrawer(GravityCompat.START);
             return true;
         });
 
@@ -80,10 +125,52 @@ private static final int SECRET_KEY = 88;
 
         preferences = getSharedPreferences(PREF_KEY, MODE_PRIVATE);
 
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))  // ezt a Firebase Console-ból kapod
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         // Firebase inicializálása
         mAuth = FirebaseAuth.getInstance();
 
         Log.i(LOG_TAG, "onCreate");
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_SIGN_IN){
+            Task<GoogleSignInAccount> task=  GoogleSignIn.getSignedInAccountFromIntent(data);
+
+        try{
+            GoogleSignInAccount account= task.getResult(ApiException.class);
+            Log.d(LOG_TAG, "firebaseAuthWithGoogle: " + account.getId());
+            firebaseAuthWithGoogle(account.getIdToken());
+        }catch (ApiException e){
+            Log.w(LOG_TAG, "Hibás bejelentkezés Google fiókkal");
+
+        }
+
+
+        }
+
+    }
+
+    private void firebaseAuthWithGoogle(String idToken) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        mAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    Log.d(LOG_TAG, "Sikeres Google bejelentkezés");
+                    startActivity(new Intent(MainActivity.this, Aboutus.class));
+                } else {
+                    Log.e(LOG_TAG, "Google bejelentkezési hiba: ", task.getException());
+                }
+            }
+        });
+
     }
 
     public void login(View view) {
@@ -104,16 +191,14 @@ private static final int SECRET_KEY = 88;
                         startActivity(new Intent(MainActivity.this, Aboutus.class));
                     } else {
                         Log.e(LOG_TAG, "Bejelentkezési hiba: ", task.getException());
-                        // Itt jelezheted a felhasználónak a hibát, pl. Toast üzenettel
                     }
                 });
     }
 
     // Google bejelentkezés megvalósítása
     public void loginWithGoogle(View view) {
-        // Google bejelentkezés kódja ide kerülne
-        // Egyszerűsítésként most csak átirányítunk az Aboutus oldalra
-        startActivity(new Intent(MainActivity.this, Aboutus.class));
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     // Anonim bejelentkezés megvalósítása
@@ -138,12 +223,33 @@ private static final int SECRET_KEY = 88;
     }
 
 
+    private void updateNavigationMenu() {
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        Menu menu = navigationView.getMenu();
+
+        mAuth = FirebaseAuth.getInstance();
+
+        if (mAuth.getCurrentUser() != null) {
+
+            menu.findItem(R.id.nav_profile).setVisible(true);
+            menu.findItem(R.id.nav_login).setVisible(false);
+            menu.findItem(R.id.nav_register).setVisible(false);
+            menu.findItem(R.id.nav_logout).setVisible(true);
+        } else {
+            menu.findItem(R.id.nav_profile).setVisible(false);
+            menu.findItem(R.id.nav_login).setVisible(true);
+            menu.findItem(R.id.nav_register).setVisible(true);
+            menu.findItem(R.id.nav_logout).setVisible(false);
+        }
+    }
 
 
     @Override
     protected void onStart() {
         super.onStart();
+        updateNavigationMenu();
         Log.i(LOG_TAG, "onStart");
+
 
     }
 
@@ -168,6 +274,7 @@ private static final int SECRET_KEY = 88;
     @Override
     protected void onResume() {
         super.onResume();
+        updateNavigationMenu();
         Log.i(LOG_TAG, "onResume");
 
     }

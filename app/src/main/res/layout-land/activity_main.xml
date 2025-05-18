@@ -1,98 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:orientation="vertical"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/loginText"
+    <!-- Fő tartalom landscape-ben is ConstraintLayout legyen -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/loginText"
-        android:textColor="#730A7D"
-        android:textSize="24sp"
-        android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/editTextEmail"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.583"
-        tools:layout_editor_absoluteX="0dp" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/editTextEmail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/email"
-        android:inputType="textEmailAddress"
-        android:layout_marginTop="40dp"
-        tools:layout_editor_absoluteX="16dp" />
+        <!-- Toolbar -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/tool_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#730A7D"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:titleTextColor="@android:color/white"
+            app:layout_constraintTop_toTopOf="parent"
+            app:title="Bejelentkezés (Land)" />
 
-    <EditText
-        android:id="@+id/editTextPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
-        android:backgroundTint="#730A7D"
-        android:textColor="#FFFFFF"
+        <!-- Példa: email és password mezők oldalra egymás mellé -->
+        <EditText
+            android:id="@+id/editTextEmail"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginEnd="8dp"
+            android:hint="@string/email"
+            android:inputType="textEmailAddress"
+            android:textColor="#730A7D"
+            app:layout_constraintTop_toBottomOf="@id/tool_bar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/editTextPassword" />
 
-        android:ems="10"
-        android:hint="@string/password"
-        android:inputType="textPassword"
-        android:layout_marginTop="40dp"
+        <EditText
+            android:id="@+id/editTextPassword"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginEnd="16dp"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:textColor="#730A7D"
+            app:layout_constraintTop_toBottomOf="@id/tool_bar"
+            app:layout_constraintStart_toEndOf="@id/editTextEmail"
+            app:layout_constraintEnd_toEndOf="parent" />
 
+        <!-- Gombok vízszintesen, két sorban pl. -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/loginButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:onClick="login"
+            android:text="@string/login"
+            android:textColor="#FFFFFF"
+            app:layout_constraintTop_toBottomOf="@id/editTextEmail"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/loginGoogleButton"
+            app:layout_constraintWidth_percent="0.48" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/loginGoogleButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:onClick="loginWithGoogle"
+            android:text="@string/login_with_google"
+            android:textColor="#FFFFFF"
+            app:layout_constraintTop_toBottomOf="@id/editTextPassword"
+            app:layout_constraintStart_toEndOf="@id/loginButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintWidth_percent="0.48" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/loginAnonymButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:onClick="loginAsAnonym"
+            android:text="@string/login_anonymously"
+            android:textColor="#FFFFFF"
+            app:layout_constraintTop_toBottomOf="@id/loginButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/registerButton"
+            app:layout_constraintWidth_percent="0.48" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/registerButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#730A7D"
+            android:onClick="register"
+            android:text="@string/register"
+            android:textColor="#FFFFFF"
+            app:layout_constraintTop_toBottomOf="@id/loginGoogleButton"
+            app:layout_constraintStart_toEndOf="@id/loginAnonymButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintWidth_percent="0.48" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Oldalsó menü -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:menu="@menu/drawer_menu"
+        app:headerLayout="@layout/nav_header"
+        android:background="#CA73D7"
         />
 
-    <Button
-        android:id="@+id/loginButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:layout_gravity="center_horizontal"
-        android:width="200dp"
-        android:backgroundTint="#730A7D"
-        android:textColor="#FFFFFF"
-        android:onClick="login"
-        android:text="@string/login" />
-    <Button
-        android:id="@+id/loginGoogleButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:layout_gravity="center_horizontal"
-        android:width="200dp"
-        android:backgroundTint="#730A7D"
-        android:textColor="#FFFFFF"
-        android:onClick="loginWithGoogle"
-        android:text="@string/login_with_google" />
-    <Button
-        android:id="@+id/loginAnonymButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:layout_gravity="center_horizontal"
-        android:width="200dp"
-        android:backgroundTint="#730A7D"
-        android:textColor="#FFFFFF"
-        android:onClick="loginAsAnonym"
-        android:text="@string/login_anonymously"
-        />
-
-    <Button
-        android:id="@+id/registerButton"
-        android:layout_width="138dp"
-        android:layout_height="46dp"
-        android:backgroundTint="#730A7D"
-        android:onClick="register"
-        android:text="@string/register"
-        android:textColor="#FFFFFF"
-        android:layout_gravity="center_horizontal"
-
- />
-
-
-</LinearLayout>
+</androidx.drawerlayout.widget.DrawerLayout>
