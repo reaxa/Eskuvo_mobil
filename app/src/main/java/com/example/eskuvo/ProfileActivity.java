@@ -1,4 +1,4 @@
-package com.example.eskuvo; // Győződj meg róla, hogy a csomag neve helyes
+package com.example.eskuvo;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -32,17 +32,17 @@ import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.text.SimpleDateFormat;
 
-// Feltételezzük, hogy léteznek ezek az osztályok, amiket használsz
-// import com.example.eskuvo.model.CartItem; // Ha van ilyen osztályod
-// import com.example.eskuvo.model.Order;    // Ha van ilyen osztályod
-// import com.example.eskuvo.adapter.OrderAdapter; // Ha van ilyen adaptered
+import com.example.eskuvo.model.Order;
+import com.example.eskuvo.adapter.OrderAdapter;
 
 public class ProfileActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
-    private TextView tvName; // Hozzáadtam a neved megjelenítéséhez
+    private TextView tvName;
     private TextView tvEmail;
     private Button changeEmailButton;
     private Button deleteProfileButton;
@@ -50,21 +50,19 @@ public class ProfileActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private NavigationView navigationView;
     private RecyclerView ordersRecyclerView;
+    private OrderAdapter orderAdapter;
+    private List<Order> orderList;
     private FirebaseFirestore db;
-
-    // Ha használsz kosár elemeket itt, akkor itt tárolhatod őket
-    // private List<CartItem> cartItems = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        // Toolbar és navigációs fiók beállítása
         toolbar = findViewById(R.id.tool_bar_profile);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayShowTitleEnabled(false); // Eltünteti a címet, ha beállítottad app:title-t XML-ben
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
         drawerLayout = findViewById(R.id.drawer_layout_profile);
@@ -82,18 +80,17 @@ public class ProfileActivity extends AppCompatActivity {
         currentUser = mAuth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
 
-        // UI elemek inicializálása
         tvName = findViewById(R.id.tvName);
         tvEmail = findViewById(R.id.tvEmail);
         changeEmailButton = findViewById(R.id.change_email_button);
         deleteProfileButton = findViewById(R.id.delete_profile_button);
         ordersRecyclerView = findViewById(R.id.ordersRecyclerView);
 
-        // RecyclerView beállítása
         ordersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        // ordersRecyclerView.setAdapter(new OrderAdapter(new ArrayList<>())); // Inicializáld az adaptert egy üres listával
+        orderList = new ArrayList<>();
+        orderAdapter = new OrderAdapter(orderList);
+        ordersRecyclerView.setAdapter(orderAdapter);
 
-        // Navigációs menü elemek láthatóságának beállítása
         Menu menu = navigationView.getMenu();
         if (currentUser != null && !currentUser.isAnonymous()) {
             menu.findItem(R.id.nav_profile).setVisible(true);
@@ -109,7 +106,6 @@ public class ProfileActivity extends AppCompatActivity {
             menu.findItem(R.id.nav_register).setVisible(true);
         }
 
-        // Navigációs menü elemek kattintáskezelése
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.nav_login) {
@@ -123,36 +119,35 @@ public class ProfileActivity extends AppCompatActivity {
             } else if (id == R.id.nav_dekoraciok) {
                 startActivity(new Intent(this, decorations.class));
             } else if (id == R.id.nav_profile) {
-                // Már a profil oldalon vagyunk, nem kell újraindítani
-                // startActivity(new Intent(this, ProfileActivity.class));
+                drawerLayout.closeDrawer(GravityCompat.START);
             } else if (id == R.id.nav_basket) {
                 startActivity(new Intent(this, BasketActivity.class));
             } else if (id == R.id.nav_logout) {
                 mAuth.signOut();
                 Toast.makeText(ProfileActivity.this, "Sikeresen kijelentkezett!", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(this, MainActivity.class)); // Vagy a login képernyőre
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
                 finish();
             }
             drawerLayout.closeDrawer(GravityCompat.START);
             return true;
         });
 
-        // Felhasználói adatok betöltése és gombok láthatósága
         if (currentUser != null && !currentUser.isAnonymous()) {
             tvEmail.setText(getString(R.string.email_format, currentUser.getEmail()));
 
-            // Ha tárolod a felhasználó nevét Firestore-ban (pl. "users" kollekcióban)
             db.collection("users").document(currentUser.getUid()).get()
                     .addOnSuccessListener(documentSnapshot -> {
                         if (documentSnapshot.exists()) {
-                            String userName = documentSnapshot.getString("name"); // Feltételezve, hogy van "name" mező
+                            String userName = documentSnapshot.getString("name");
                             if (userName != null) {
-                                tvName.setText(getString(R.string.neved_format, userName)); // Pl. "Neved: %s"
+                                tvName.setText(getString(R.string.neved_format, userName));
                             } else {
-                                tvName.setText(getString(R.string.nevednem)); // Alapértelmezett, ha nincs név
+                                tvName.setText(getString(R.string.nevednem));
                             }
                         } else {
-                            tvName.setText(getString(R.string.neved));
+                            tvName.setText(getString(R.string.nevednem));
                         }
                     })
                     .addOnFailureListener(e -> {
@@ -166,45 +161,17 @@ public class ProfileActivity extends AppCompatActivity {
             changeEmailButton.setOnClickListener(v -> handleChangeEmail());
             deleteProfileButton.setOnClickListener(v -> handleDeleteProfile());
 
-            // Rendelések betöltése
             loadOrders();
 
-            // Ide kerülhetne a "cartItems.add(new CartItem(dec, quantity));" logika,
-            // ha valamiért itt akarod kezelni a kosárba adást.
-            // Például:
-            // CartItem dec = new CartItem("Dekoráció 1", 1000); // Példa Dekoráció
-            // int quantity = 2; // Példa mennyiség
-            // cartItems.add(new CartItem(dec, quantity)); // Ez a sor került volna be
-            // Log.d("ProfileActivity", "Kosár elem hozzáadva (példa): " + cartItems.size());
-
         } else {
-            // Nincs bejelentkezve vagy anonim felhasználó
-            tvName.setText(getString(R.string.neved)); // Alapértelmezett
+            tvName.setText(getString(R.string.nevednem));
             tvEmail.setText(getString(R.string.email_format, "Nincs bejelentkezve"));
             changeEmailButton.setVisibility(View.GONE);
             deleteProfileButton.setVisibility(View.GONE);
             Toast.makeText(this, "Jelentkezzen be a profilfunkciók eléréséhez.", Toast.LENGTH_LONG).show();
-            // Optional: Redirect to login activity
-            // startActivity(new Intent(this, MainActivity.class));
-            // finish();
         }
     }
 
-    // A kosár elem hozzáadása valószínűleg nem idevaló,
-    // de ha mégis, akkor valahonnan kellene kapnia a 'dec' és 'quantity' értékeket.
-    // Ha a 210-es sorban lévő kód a megadott, akkor az egy metóduson belül kellene lennie,
-    // pl. egy gombnyomásra vagy valamilyen eseményre aktiválódva.
-    // Példa (ez valószínűleg ROSSZ helyen van a ProfileActivity-ben):
-    /*
-    private void addDecorationToCart(Decoration dec, int quantity) {
-        cartItems.add(new CartItem(dec, quantity));
-        Toast.makeText(this, dec.getName() + " hozzáadva a kosárhoz!", Toast.LENGTH_SHORT).show();
-        // Frissíteni kellene a kosár UI-t is, ha van ilyen.
-    }
-    */
-
-
-    // Email cím módosítása
     private void handleChangeEmail() {
         if (currentUser == null) {
             Toast.makeText(this, "Nincs bejelentkezve felhasználó.", Toast.LENGTH_SHORT).show();
@@ -272,7 +239,6 @@ public class ProfileActivity extends AppCompatActivity {
         builder.show();
     }
 
-    // Profil törlése
     private void handleDeleteProfile() {
         if (currentUser == null) {
             Toast.makeText(this, "Nincs bejelentkezve felhasználó.", Toast.LENGTH_SHORT).show();
@@ -342,7 +308,6 @@ public class ProfileActivity extends AppCompatActivity {
         builder.show();
     }
 
-    // Rendelések betöltése Firestore-ból
     private void loadOrders() {
         if (currentUser == null) {
             Log.d("ProfileActivity", "Nincs bejelentkezett felhasználó a rendelések betöltéséhez.");
@@ -350,21 +315,27 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         db.collection("users").document(currentUser.getUid()).collection("orders")
-                .orderBy("timestamp", Query.Direction.DESCENDING) // Feltételezve, hogy van 'timestamp' meződ
+                .orderBy("timestamp", Query.Direction.DESCENDING)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        List<Object> orders = new ArrayList<>(); // Cseréld ki 'Object'-et a tényleges 'Order' osztályodra
+                        List<Order> fetchedOrders = new ArrayList<>();
                         for (DocumentSnapshot document : task.getResult()) {
-                            // Cseréld ki az 'Order.class'-t a tényleges rendelési osztályodra
-                            // Order order = document.toObject(Order.class);
-                            // if (order != null) {
-                            //     orders.add(order);
-                            // }
+                            try {
+                                Order order = document.toObject(Order.class);
+                                if (order != null) {
+                                    // A Firestore dokumentum ID-jét beállítjuk az Order objektumban
+                                    order.setOrderId(document.getId());
+                                    fetchedOrders.add(order);
+                                }
+                            } catch (Exception e) {
+                                Log.e("ProfileActivity", "Hiba az Order objektum konvertálásakor: " + document.getId(), e);
+                                // Debug: Logolja a nyers adatokat, ha probléma van a konvertálással
+                                Log.e("ProfileActivity", "Nyers dokumentum adatok: " + document.getData());
+                            }
                         }
-                        // Itt frissítsd a RecyclerView adapterét a betöltött rendelésekkel
-                        // Pl.: ordersRecyclerView.setAdapter(new OrderAdapter(orders));
-                        Log.d("ProfileActivity", "Rendelések sikeresen betöltve: " + orders.size());
+                        orderAdapter.updateOrders(fetchedOrders);
+                        Log.d("ProfileActivity", "Rendelések sikeresen betöltve: " + fetchedOrders.size());
                     } else {
                         Log.e("ProfileActivity", "Hiba a rendelések betöltésekor: ", task.getException());
                         Toast.makeText(ProfileActivity.this, "Hiba a rendelések betöltésekor.", Toast.LENGTH_SHORT).show();
@@ -372,7 +343,6 @@ public class ProfileActivity extends AppCompatActivity {
                 });
     }
 
-    // A navigációs fiók bezárásának kezelése visszagombnyomásra
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
