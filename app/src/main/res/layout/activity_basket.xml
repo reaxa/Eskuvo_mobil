@@ -15,30 +15,35 @@
             android:id="@+id/tool_bar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="#730A7D"
             android:title="@string/basket"
             />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewBasket"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_height="428dp"
+            android:layout_weight="1" />
 
         <TextView
             android:id="@+id/textViewTotalPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="8dp"
+
             android:text="Végösszeg: 0 Ft"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:padding="8dp"/>
+            app:layout_constraintTop_toBottomOf="@id/recyclerViewBasket" />
 
         <Button
             android:id="@+id/buttonPay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Fizetés" />
+            android:background="#730A7D"
+            android:text="Fizetés"
+
+            app:layout_constraintTop_toBottomOf="@id/textViewTotalPrice" />
 
     </LinearLayout>
 
@@ -49,7 +54,8 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        android:background="@android:color/white"
-        app:menu="@menu/drawer_menu" />
+        app:menu="@menu/drawer_menu"
+        app:headerLayout="@layout/nav_header"
+        android:background="#CA73D7"  />
 
 </androidx.drawerlayout.widget.DrawerLayout>

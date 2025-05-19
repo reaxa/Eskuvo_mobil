@@ -51,9 +51,12 @@
     <string name="increase_quantity">noveles</string>
     <string name="osszeg">Összeg:</string>
     <string name="datum">Dátum:</string>
-    <string name="email">email</string>
-    <string name="neved">neved</string>
-
+    <string name="email">Email</string>
+    <string name="neved">Neved</string>
+    <string name="nevednem">Név: Nem elérhető</string>
+    <string name="neved_format">Név: %s</string>
+    <string name="emailnem">Email: Nem elérhető</string>
+    <string name="email_format">Email: %s</string>
 </resources>
 
 
