@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name">Eskuvo</string>
-    <string name="email">Email</string>
+
     <string name="password">Jelszó</string>
     <string name="login">Bejelentkezés</string>
     <string name="register">Regisztráció</string>
     <string name="loginText">Bejelentkezés</string>
     <string name="registerText">Regisztráció</string>
-    <string name="neved">Neved</string>
+
     <string name="password2">Jelszó mégegyszer</string>
     <string name="login_with_google">Bejelentkezés Google-lal</string>
     <string name="login_anonymously">Bejelentkezés névtelenül</string>
@@ -51,6 +51,8 @@
     <string name="increase_quantity">noveles</string>
     <string name="osszeg">Összeg:</string>
     <string name="datum">Dátum:</string>
+    <string name="email">email</string>
+    <string name="neved">neved</string>
 
 </resources>
 

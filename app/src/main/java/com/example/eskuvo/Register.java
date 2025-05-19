@@ -14,7 +14,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -23,10 +24,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Register extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String LOG_TAG = Register.class.getName();
-    private static final String PREF_KEY = MainActivity.class.getPackage().toString();
+    private static final String PREF_KEY = "com.example.eskuvo.PREFERENCE_FILE_KEY";
 
     EditText userNameEditText;
     EditText userEmailEditText;
@@ -34,7 +38,8 @@ public class Register extends AppCompatActivity implements NavigationView.OnNavi
     EditText password2EditText;
 
     private SharedPreferences preferences;
-    private FirebaseAuth mAuth;
+    private FirebaseAuth mAuth;   // csak itt deklaráljuk egyszer
+
     private DrawerLayout drawerLayout;
 
     @Override
@@ -43,11 +48,11 @@ public class Register extends AppCompatActivity implements NavigationView.OnNavi
         setContentView(R.layout.activity_register);
 
         int secret_key = getIntent().getIntExtra("SECRET_KEY", 0);
-        Log.d(LOG_TAG, "Received SECRET_KEY: " + secret_key);
-
         if (secret_key != 88) {
             finish();
         }
+
+        mAuth = FirebaseAuth.getInstance();  // itt inicializáljuk
 
         userNameEditText = findViewById(R.id.editTextUserName);
         userEmailEditText = findViewById(R.id.editTextEmail);
@@ -62,8 +67,6 @@ public class Register extends AppCompatActivity implements NavigationView.OnNavi
         passwordEditText.setText(password);
         password2EditText.setText(password);
 
-        mAuth = FirebaseAuth.getInstance();
-
         // Toolbar beállítás
         Toolbar toolbar = findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
@@ -71,7 +74,6 @@ public class Register extends AppCompatActivity implements NavigationView.OnNavi
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
-        // Hamburger ikon működtetése
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar,
                 R.string.navigation_drawer_open,
@@ -79,26 +81,25 @@ public class Register extends AppCompatActivity implements NavigationView.OnNavi
         );
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+
+        // Menü állapot kezelése, maradjon az eredeti kódod
         Menu menu = navigationView.getMenu();
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if (currentUser != null && !currentUser.isAnonymous()) {
             menu.findItem(R.id.nav_profile).setVisible(true);
             menu.findItem(R.id.nav_logout).setVisible(true);
-            menu.findItem(R.id.nav_basket).setVisible(true);   // <-- Kosár menüpont
+            menu.findItem(R.id.nav_basket).setVisible(true);
             menu.findItem(R.id.nav_login).setVisible(false);
             menu.findItem(R.id.nav_register).setVisible(false);
         } else {
             menu.findItem(R.id.nav_profile).setVisible(false);
             menu.findItem(R.id.nav_logout).setVisible(false);
-            menu.findItem(R.id.nav_basket).setVisible(false);  // <-- Kosár menüpont eltüntetése anonim vagy nincs login
+            menu.findItem(R.id.nav_basket).setVisible(false);
             menu.findItem(R.id.nav_login).setVisible(true);
             menu.findItem(R.id.nav_register).setVisible(true);
         }
 
-
-        // Menüelemek kattintás
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.nav_login) {
@@ -114,7 +115,7 @@ public class Register extends AppCompatActivity implements NavigationView.OnNavi
             } else if (id == R.id.nav_profile) {
                 startActivity(new Intent(this, ProfileActivity.class));
             } else if (id == R.id.nav_basket) {
-                startActivity(new Intent(this, BasketActivity.class));  // kosár activity indítása
+                startActivity(new Intent(this, BasketActivity.class));
             } else if (id == R.id.nav_logout) {
                 mAuth.signOut();
                 startActivity(new Intent(this, MainActivity.class));
@@ -146,11 +147,8 @@ public class Register extends AppCompatActivity implements NavigationView.OnNavi
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        Log.d(LOG_TAG, "Sikeres regisztráció");
-
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
-                            // Frissítsük a displayName mezőt a regisztrált névvel
                             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                                     .setDisplayName(userName)
                                     .build();
@@ -158,18 +156,34 @@ public class Register extends AppCompatActivity implements NavigationView.OnNavi
                             user.updateProfile(profileUpdates)
                                     .addOnCompleteListener(profileTask -> {
                                         if (profileTask.isSuccessful()) {
-                                            Log.d(LOG_TAG, "Felhasználó neve frissítve.");
-                                            Toast.makeText(Register.this, "Sikeres regisztráció!", Toast.LENGTH_SHORT).show();
-                                            startActivity(new Intent(Register.this, Aboutus.class));
-                                            finish();
+                                            // FELHASZNÁLÓI ADATOK MENTÉSE A FIRESTORE-BA
+                                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                            Map<String, Object> userData = new HashMap<>();
+                                            userData.put("name", userName); // A regisztrációkor megadott név
+                                            userData.put("email", email);   // A regisztrációkor megadott email
+
+                                            db.collection("users").document(user.getUid())
+                                                    .set(userData) // .set() felülírja, ha már létezne (új regisztrációnál ez jó)
+                                                    .addOnSuccessListener(aVoid -> {
+                                                        Log.d(LOG_TAG, "Felhasználói adatok sikeresen mentve a Firestore-ba.");
+                                                        Toast.makeText(Register.this, "Sikeres regisztráció!", Toast.LENGTH_SHORT).show();
+                                                        // Indítsd el a ProfileActivity-t vagy a MainActivity-t a bejelentkezés után
+                                                        startActivity(new Intent(Register.this, ProfileActivity.class));
+                                                        finish(); // Bezárja a Register activity-t
+                                                    })
+                                                    .addOnFailureListener(e -> {
+                                                        Log.w(LOG_TAG, "Hiba a felhasználói adatok Firestore-ba mentésekor.", e);
+                                                        Toast.makeText(Register.this, "Regisztráció sikeres, de a profiladatok mentése nem sikerült: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                                        // Ebben az esetben is tovább lehet engedni, de a profiloldalon nem lesz adat
+                                                        startActivity(new Intent(Register.this, ProfileActivity.class));
+                                                        finish();
+                                                    });
                                         } else {
-                                            Log.e(LOG_TAG, "Profil frissítési hiba: ", profileTask.getException());
                                             Toast.makeText(Register.this, "Profil frissítési hiba: " + profileTask.getException().getMessage(), Toast.LENGTH_LONG).show();
                                         }
                                     });
                         }
                     } else {
-                        Log.e(LOG_TAG, "Regisztrációs hiba: ", task.getException());
                         Toast.makeText(Register.this, "Regisztrációs hiba: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });

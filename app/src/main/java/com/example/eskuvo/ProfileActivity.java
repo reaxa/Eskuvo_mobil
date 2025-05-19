@@ -32,10 +32,7 @@ import com.google.firestore.admin.v1.Index;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 public class ProfileActivity extends AppCompatActivity {
-
-    private static final String LOG_TAG = ProfileActivity.class.getName();
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
@@ -44,49 +41,27 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView tvName, tvEmail;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private FirebaseAuth auth = FirebaseAuth.getInstance();
     private RecyclerView ordersRecyclerView;
     private OrderAdapter orderAdapter;
+    private static final String LOG_TAG = ProfileActivity.class.getSimpleName();
+
     private List<Order> orders = new ArrayList<>();
 
-    private void loadOrders() {
-        FirebaseUser user = auth.getCurrentUser();
-        if (user == null) return;
-
-        db.collection("users").document(user.getUid())
-                .collection("orders")
-                .orderBy("timestamp", Query.Direction.DESCENDING)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    orders.clear();
-                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                        List<Map<String, Object>> itemsMap = (List<Map<String, Object>>) doc.get("items");
-                        double totalPrice = doc.getDouble("totalPrice");
-                        long timestamp = doc.getLong("timestamp");
-
-                        List<CartItem> cartItems = new ArrayList<>();
-                        for (Map<String, Object> itemMap : itemsMap) {
-                            String name = (String) itemMap.get("name");
-                            double price = ((Number) itemMap.get("price")).doubleValue();
-                            int quantity = ((Number) itemMap.get("quantity")).intValue();
-                            Decoration dec = new Decoration(name, price);
-                            cartItems.add(new CartItem(dec, quantity));
-                        }
-
-                        orders.add(new Order(cartItems, totalPrice, timestamp));
-                    }
-
-                    orderAdapter.notifyDataSetChanged();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Nem sikerült betölteni a rendeléseket: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         FirebaseApp.initializeApp(this);
         setContentView(R.layout.activity_profile);
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) {
+            // Nincs bejelentkezve - pl. átirányítod a login oldalra
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+            return;
+        }
+
 
         // Toolbar és DrawerLayout init
         Toolbar toolbar = findViewById(R.id.tool_bar_profile);
@@ -111,17 +86,16 @@ public class ProfileActivity extends AppCompatActivity {
         if (currentUser != null && !currentUser.isAnonymous()) {
             menu.findItem(R.id.nav_profile).setVisible(true);
             menu.findItem(R.id.nav_logout).setVisible(true);
-            menu.findItem(R.id.nav_basket).setVisible(true);   // <-- Kosár menüpont
+            menu.findItem(R.id.nav_basket).setVisible(true);
             menu.findItem(R.id.nav_login).setVisible(false);
             menu.findItem(R.id.nav_register).setVisible(false);
         } else {
             menu.findItem(R.id.nav_profile).setVisible(false);
             menu.findItem(R.id.nav_logout).setVisible(false);
-            menu.findItem(R.id.nav_basket).setVisible(false);  // <-- Kosár menüpont eltüntetése anonim vagy nincs login
+            menu.findItem(R.id.nav_basket).setVisible(false);
             menu.findItem(R.id.nav_login).setVisible(true);
             menu.findItem(R.id.nav_register).setVisible(true);
         }
-
 
         // Menüelemek kattintás
         navigationView.setNavigationItemSelectedListener(item -> {
@@ -139,7 +113,7 @@ public class ProfileActivity extends AppCompatActivity {
             } else if (id == R.id.nav_profile) {
                 startActivity(new Intent(this, ProfileActivity.class));
             } else if (id == R.id.nav_basket) {
-                startActivity(new Intent(this, BasketActivity.class));  // kosár activity indítása
+                startActivity(new Intent(this, BasketActivity.class));
             } else if (id == R.id.nav_logout) {
                 mAuth.signOut();
                 startActivity(new Intent(this, MainActivity.class));
@@ -153,31 +127,98 @@ public class ProfileActivity extends AppCompatActivity {
         tvName = findViewById(R.id.tvName);
         tvEmail = findViewById(R.id.tvEmail);
 
-        // Felhasználó adatainak megjelenítése
-        FirebaseUser user = mAuth.getCurrentUser();
-
-        if (user != null) {
-            String name = user.getDisplayName();
-            if (name == null || name.isEmpty()) {
-                name = "Név ismeretlen";
-            }
-            tvName.setText(name);
-            tvEmail.setText(user.getEmail());
-        } else {
-            tvName.setText("Nincs bejelentkezve");
-            tvEmail.setText("");
-        }
-
-        Log.i(LOG_TAG, "ProfileActivity onCreate");
-
-
+        // RecyclerView és adapter beállítása
         ordersRecyclerView = findViewById(R.id.ordersRecyclerView);
         ordersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         orderAdapter = new OrderAdapter(orders);
         ordersRecyclerView.setAdapter(orderAdapter);
 
-// Rendelések betöltése
+        // Első adatbetöltés
+        refreshUserProfile();
         loadOrders();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshUserProfile();
+        loadOrders();
+    }
+
+    private void refreshUserProfile() {
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        if (user == null) {
+            tvName.setText("Nincs bejelentkezve");
+            tvEmail.setText("");
+            return;
+        }
+
+        db.collection("users").document(user.getUid())
+                .get()
+                .addOnSuccessListener(document -> {
+                    if (document != null && document.exists()) {
+                        Log.d(LOG_TAG, "Profil dokumentum: " + document.getData());
+
+                        String name = document.getString("name");
+                        String email = document.getString("email");
+
+                        if (name == null || name.isEmpty()) {
+                            tvName.setText("Név nem elérhető");
+                        } else {
+                            tvName.setText(name);
+                        }
+
+                        if (email == null || email.isEmpty()) {
+                            tvEmail.setText("Email nem elérhető");
+                        } else {
+                            tvEmail.setText(email);
+                        }
+                    } else {
+                        Log.d(LOG_TAG, "Nem létezik a dokumentum!");
+                    }
+                })
+
+                .addOnFailureListener(e -> {
+                    Log.e(LOG_TAG, "Profiladat lekérdezési hiba", e);
+                });
+
+    }
+
+    private void loadOrders() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) return;
+
+        db.collection("users").document(user.getUid())
+                .collection("orders")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    orders.clear();
+                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                        List<Map<String, Object>> itemsMap = (List<Map<String, Object>>) doc.get("items");
+                        Double totalPrice = doc.getDouble("totalPrice");
+                        Long timestamp = doc.getLong("timestamp");
+
+                        List<CartItem> cartItems = new ArrayList<>();
+                        if (itemsMap != null) {
+                            for (Map<String, Object> itemMap : itemsMap) {
+                                String name = (String) itemMap.get("name");
+                                double price = ((Number) itemMap.get("price")).doubleValue();
+                                int quantity = ((Number) itemMap.get("quantity")).intValue();
+                                Decoration dec = new Decoration(name, price);
+                                cartItems.add(new CartItem(dec, quantity));
+                            }
+                        }
+
+                        orders.add(new Order(cartItems, totalPrice != null ? totalPrice : 0.0, timestamp != null ? timestamp : 0L));
+                    }
+
+                    orderAdapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Nem sikerült betölteni a rendeléseket: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 
     @Override

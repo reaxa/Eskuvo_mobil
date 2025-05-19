@@ -1,5 +1,7 @@
 package com.example.eskuvo;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -83,6 +85,22 @@ public class BasketActivity extends AppCompatActivity {
                     Toast.makeText(this, "Hiba történt a mentés során: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
+
+
+    private void scheduleOrderNotification(long triggerAtMillis, String message) {
+        Intent intent = new Intent(this, NotificationReceiver.class);
+        intent.putExtra("notification_message", message);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                this, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        if (alarmManager != null) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +122,8 @@ public class BasketActivity extends AppCompatActivity {
         });
         payButton.setOnClickListener(v -> {
             saveOrderToFirestore();
+            long tenMinutesFromNow = System.currentTimeMillis() + 10 * 60 * 1000;
+            scheduleOrderNotification(tenMinutesFromNow, "A rendelésed feldolgozás alatt áll.");
 
             CartManager.getInstance().clearCart();
             Toast.makeText(this, "Fizetés megtörtént!", Toast.LENGTH_SHORT).show();
